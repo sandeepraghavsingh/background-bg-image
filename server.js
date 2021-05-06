@@ -5,8 +5,9 @@ var express = require("express");
 var bodyParser = require('body-parser');
 let path = require('path');
 let cors = require('cors');
+import { v4 as uuidv4 } from 'uuid';
 var app = express();
-
+app.use(cors);
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 
@@ -31,9 +32,9 @@ app.post("/api/remove-bg",function(req,res){
       }, function(error, response, body) {
         if(error) return console.error('Request failed:', error);
         if(response.statusCode != 200) return console.error('Error:', response.statusCode, body.toString('utf8'));
-        console.log(body);
-        fs.writeFileSync("public/nobg.png", body);
-        return res.send({msg:"Removed Successfully","imageNBPath":"nobg.png"});
+        const imageName = uuidv4();
+        fs.writeFileSync(`public/${imageName}.png`, body);
+        return res.send({msg:"Removed Successfully","imageNBPath":`${imageName}.png`});
       });    
     
 });
